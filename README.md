@@ -1,4 +1,10 @@
 # Rec_Evaluation
+
+Get started:
+Unzip "exerything (2).zip" go into the directory, where "start_congress_eval.sh" lies and execute it in a terminal with ./start_congress_eval.sh.
+
+
+Additional Information:
 - Within the datset folder you'll need the files "C.txt", "F.txt", "dAtoC.txt" and the directory "EvaluationResults", with the subdirectories "kUFLLocalSearch", "LP", "RecLocalSearch".
 - Optional textfile "G.txt".
 - C.txt: has all the numbers, corresponding to clients
