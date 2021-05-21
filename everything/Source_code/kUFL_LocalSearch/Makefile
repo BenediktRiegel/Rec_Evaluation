@@ -1,3 +1,5 @@
+CCC = g++ -std=c++11 -fopenmp
+
 all: clean build
 
 clean:
@@ -10,22 +12,22 @@ clean:
 	rm -f kUFL_LocalSearch
 
 build: evaluateTwitter.o kMSolution.o loadsave.o AlgoByJoachimAndKamyar.o vectorEkUFL_LocalSearch.o fixedDouble.o
-	g++ -fopenmp -o kUFL_LocalSearch main.cpp evaluateTwitter.o vectorEkUFL_LocalSearch.o AlgoByJoachimAndKamyar.o kMSolution.o loadsave.o fixedDouble.o
+	$(CCC) -o kUFL_LocalSearch main.cpp evaluateTwitter.o vectorEkUFL_LocalSearch.o AlgoByJoachimAndKamyar.o kMSolution.o loadsave.o fixedDouble.o
 
 AlgoByJoachimAndKamyar.o:
-	g++ -fopenmp -c AlgoByJoachimAndKamyar.cpp -o AlgoByJoachimAndKamyar.o
+	$(CCC) -c AlgoByJoachimAndKamyar.cpp -o AlgoByJoachimAndKamyar.o
 
 vectorEkUFL_LocalSearch.o:
-	g++ -c vectorEkUFL_LocalSearch.cpp -o vectorEkUFL_LocalSearch.o
+	$(CCC) -c vectorEkUFL_LocalSearch.cpp -o vectorEkUFL_LocalSearch.o
 
 evaluateTwitter.o:
-	g++ -c evaluateTwitter.cpp -o evaluateTwitter.o
+	$(CCC) -c evaluateTwitter.cpp -o evaluateTwitter.o
 
 kMSolution.o:
-	g++ -c kMSolution.cpp -o kMSolution.o
+	$(CCC) -c kMSolution.cpp -o kMSolution.o
 
 loadsave.o:
-	g++ -c loadsave.cpp -o loadsave.o
+	$(CCC) -c loadsave.cpp -o loadsave.o
 
 fixedDouble.o:
-	g++ -c fixedDouble.cpp -o fixedDouble.o
+	$(CCC) -c fixedDouble.cpp -o fixedDouble.o

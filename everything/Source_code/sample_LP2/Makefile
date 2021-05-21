@@ -1,7 +1,7 @@
 SYSTEM     = x86-64_linux
 LIBFORMAT  = static_pic
 
-CCC = g++ -fopenmp
+CCC = g++ -std=c++11 -fopenmp
 
 CPLEX_STUDIO = /opt/ibm/ILOG/CPLEX_Studio201
 
