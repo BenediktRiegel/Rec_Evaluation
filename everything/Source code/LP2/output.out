@@ -1,0 +1,160 @@
+Starting evalFpartC
+read data
+Create C and F
+start evalutaion
+k: 5, lam: 1
+JKRedAlgo: 1 of 6
+solve LP
+check for integer solution
+compute costs
+m: 0 tempCost: 64
+JKRedAlgo: 2 of 6
+solve LP
+check for integer solution
+compute costs
+m: 1 tempCost: 61.4
+JKRedAlgo: 3 of 6
+solve LP
+check for integer solution
+compute costs
+m: 2 tempCost: 61.4
+JKRedAlgo: 4 of 6
+solve LP
+check for integer solution
+compute costs
+m: 3 tempCost: 62.3
+JKRedAlgo: 5 of 6
+solve LP
+check for integer solution
+compute costs
+m: 4 tempCost: 62.3
+JKRedAlgo: 6 of 6
+solve LP
+check for integer solution
+compute costs
+m: 5 tempCost: 61.4
+Done
+end
+
+
+
+Starting evalFpartC
+read data
+Create C and F
+start evalutaion
+k: 5, lam: 1
+JKRedAlgo: 1 of 6
+solve LP
+check for integer solution
+compute costs
+m: 0 tempCost: 64
+JKRedAlgo: 2 of 6
+solve LP
+check for integer solution
+compute costs
+m: 1 tempCost: 61.4
+JKRedAlgo: 3 of 6
+solve LP
+check for integer solution
+compute costs
+m: 2 tempCost: 61.4
+JKRedAlgo: 4 of 6
+solve LP
+check for integer solution
+compute costs
+m: 3 tempCost: 62.3
+JKRedAlgo: 5 of 6
+solve LP
+check for integer solution
+compute costs
+m: 4 tempCost: 62.3
+JKRedAlgo: 6 of 6
+solve LP
+check for integer solution
+compute costs
+m: 5 tempCost: 61.4
+Done
+end
+
+
+
+Starting evalFpartC
+read data
+Create C and F
+start evalutaion
+k: 5, lam: 1
+JKRedAlgo: 1 of 6
+solve LP
+check for integer solution
+compute costs
+m: 0 tempCost: 64
+JKRedAlgo: 2 of 6
+solve LP
+check for integer solution
+compute costs
+m: 1 tempCost: 61.4
+JKRedAlgo: 3 of 6
+solve LP
+check for integer solution
+compute costs
+m: 2 tempCost: 61.4
+JKRedAlgo: 4 of 6
+solve LP
+check for integer solution
+compute costs
+m: 3 tempCost: 62.3
+JKRedAlgo: 5 of 6
+solve LP
+check for integer solution
+compute costs
+m: 4 tempCost: 62.3
+JKRedAlgo: 6 of 6
+solve LP
+check for integer solution
+compute costs
+m: 5 tempCost: 61.4
+Done
+end
+
+
+
+Starting evalFpartC
+read data
+Create C and F
+start evalutaion
+k: 5, lam: 1
+JKRedAlgo: 1 of 6
+solve LP
+check for integer solution
+compute costs
+m: 0 tempCost: 64
+JKRedAlgo: 2 of 6
+solve LP
+check for integer solution
+compute costs
+m: 1 tempCost: 61.4
+JKRedAlgo: 3 of 6
+solve LP
+check for integer solution
+compute costs
+m: 2 tempCost: 61.4
+JKRedAlgo: 4 of 6
+solve LP
+check for integer solution
+compute costs
+m: 3 tempCost: 62.3
+JKRedAlgo: 5 of 6
+solve LP
+check for integer solution
+compute costs
+m: 4 tempCost: 62.3
+JKRedAlgo: 6 of 6
+solve LP
+check for integer solution
+compute costs
+m: 5 tempCost: 61.4
+Done
+end
+
+
+
