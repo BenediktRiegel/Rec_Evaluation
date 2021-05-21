@@ -36,7 +36,8 @@ pair<kMSolution, vector<int>> recsolve(vector<int>* C, vector<int>* F, vector<ve
     cout << "guessing median in F" << endl;
 #pragma omp declare reduction(minKMS : kMSolution : omp_out = (omp_out.service_cost == -1 || (omp_in.cost() < omp_out.cost())) ? omp_in : omp_out) initializer (omp_priv=omp_orig)
 #pragma omp parallel for reduction(minKMS:S)
-    for (int m : *F) {
+    for (int p = 0; p < (*F).size(); ++p) {
+        int m = (*F).at(p);
         indexM += 1;
         // JKRedAlgo = Joachim and Kamyar Reduction Algorithm
         // print the number of the median guessed

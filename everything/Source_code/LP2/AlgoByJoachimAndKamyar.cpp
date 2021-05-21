@@ -35,12 +35,13 @@ pair<kMSolution, bool> recsolve(vector<int>* C, vector<int>* F, map<int, map<int
     pair<kMSolution, bool> result = pair<kMSolution, bool>(S, lp_only);
     //cout << "max number of threads: " << omp_get_max_threads() << endl;
 // guessing the median in F
-#pragma omp declare reduction(minKMS : pair<kMSolution, bool> : omp_out = pair<kMSolution, bool> (((omp_out.first.service_cost == -1 || (omp_in.first.cost() < omp_out.first.cost())) ? omp_in.first : omp_out.first), (omp_in.second && omp_out.second))) initializer (omp_priv=omp_orig)
-#pragma omp parallel for reduction(minKMS:result)
 //pragma omp declare reduction(minKMS : pair<kMSolution, bool> : omp_out = ((omp_out.first.service_cost == -1 || (omp_in.first.cost() < omp_out.first.cost())) ? omp_in.first : omp_out.first), (omp_in.second && omp_out.second)) initializer (omp_priv=omp_orig)
 //pragma omp parallel for reduction(minKMS:result)
 //#pragma omp parallel for
-    for (int m : *F) {
+#pragma omp declare reduction(minKMS : pair<kMSolution, bool> : omp_out = pair<kMSolution, bool> (((omp_out.first.service_cost == -1 || (omp_in.first.cost() < omp_out.first.cost())) ? omp_in.first : omp_out.first), (omp_in.second && omp_out.second))) initializer (omp_priv=omp_orig)
+#pragma omp parallel for reduction(minKMS:result)
+    for (int p = 0; p < (*F).size(); ++p) {
+        int m = (*F).at(p);
     //for (int test = 0; test < 4; ++test) {
         //int m = (*F).at(test);
         //cout << "thread id: " << omp_get_thread_num() << endl;
