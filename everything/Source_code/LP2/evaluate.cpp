@@ -61,25 +61,39 @@ void evalFpartC(string path, int num_runs) {
 	}*/
 
 	cout << "start evalutaion" << endl;
+	vector<vector<bool>> pure_LP;
+	pure_LP.reserve(ks.size() * lams.size());
 	for (int k : ks) {
-		for (double lam : lams) {
-			cout << "k: " << k << ", lam: " << stringValue(lam) << endl;
-			for (int run = 0; run < num_runs; ++run) {
-				cout << "run " << run << endl;
-				auto t_start = std::chrono::high_resolution_clock::now();
-				pair<kMSolution, bool> S = (recsolve(&C, &F, &dAtoC, &dAtoC, lam, k, G));
-				auto t_end = std::chrono::high_resolution_clock::now();
-				double duration = std::chrono::duration<double, std::milli>(t_end - t_start).count();
-
-				saveResult(path, S.first, S.second, duration, lam, k);
-				if (S.second) {
-					cout << "Everything was LP_only" << endl;
-					break;
-				}
-			}
-			cout << "runs finished\n\n\n" << endl;
-		}
+	    vector<bool> temp;
+	    temp.reserve(lams.size());
+	    for (double lam : lams) {
+	        temp.push_back(false);
+	    }
+	    pure_LP.push_back(temp);
 	}
+    for (int run = 0; run < num_runs; ++run) {
+        for (int i = 0; i < ks.size(); ++i) {
+            int k = ks.at(i);
+            for (int j = 0; j < ks.size(); ++j) {
+                double lam = lams.at(j);
+                if (!pure_LP.at(i).at(j)) {
+                    cout << "k: " << k << ", lam: " << stringValue(lam) << endl;
+                    cout << "run " << run << endl;
+                    auto t_start = std::chrono::high_resolution_clock::now();
+                    pair<kMSolution, bool> S = (recsolve(&C, &F, &dAtoC, &dAtoC, lam, k, G));
+                    auto t_end = std::chrono::high_resolution_clock::now();
+                    double duration = std::chrono::duration<double, std::milli>(t_end - t_start).count();
+
+                    saveResult(path, S.first, S.second, duration, lam, k);
+                    if (S.second) {
+                        cout << "Everything was LP_only" << endl;
+                        pure_LP[i][j] = true;
+                    }
+                }
+            }
+            cout << "runs finished\n\n\n" << endl;
+        }
+    }
 	cout << "Done" << endl;
 
 
