@@ -334,14 +334,17 @@ int roundEdges(roundgraph* rgraph, const vector<int>& pathE, map<int, map<int, i
                         (*rgraph).G[pathE[i]][pathE[i + 1]] + alpha - beta;
 
                 (*rgraph).G[pathE[i + 1]][pathE[i]] = (*rgraph).G[pathE[i]][pathE[i + 1]];
+
             }
             // in M2
             else {
                 if (doesEdgeExist((*rgraph).G, pathE[i + 1], pathE[i])) {
+
                     (*rgraph).G[pathE[i]][pathE[i + 1]] =
                             (*rgraph).G[pathE[i]][pathE[i + 1]] + beta - alpha;
 
                     (*rgraph).G[pathE[i + 1]][pathE[i]] = (*rgraph).G[pathE[i]][pathE[i + 1]];
+
                 }
             }
 

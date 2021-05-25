@@ -63,6 +63,10 @@ public:
 
     bool operator==(double b) const;
 
+    bool operator==(const int b) const {
+        return this->getDouble() == b;
+    }
+
 
     bool operator!=(fixedDouble b) const {
         return !((*this) == b);

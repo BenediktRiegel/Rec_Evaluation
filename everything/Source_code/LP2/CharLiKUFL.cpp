@@ -511,7 +511,7 @@ void matchingBundles(const set<int>& CP, set<int>* unmatchedBundles, set<pair<in
             for (int j2 : *unmatchedBundles) {
                 if (j1 != j2 &&
                     (minPair.first == -1 ||
-                     (*dAtoC)[j1].at(j2) < (*dAtoC)[minPair.first].at(minPair.second))) {
+                     (*dAtoC).at(j1).at(j2) < (*dAtoC).at(minPair.first).at(minPair.second))) {
                     minPair = pair<int, int>(j1, j2);
                 }
             }
@@ -792,12 +792,33 @@ vector<int> sample(const vector<int>& newF, const set<pair<int, int>>& M, const 
     cout << "create graph" << endl;
     roundgraph rgraph = createGraph(newF, M, unmatchedBundles, unbundledFacilities, bundles, \
                                     removedOriginalFs, originalFToSplits);
+
+    //rgraph.get_none_zero_nodes();
+    //cout << stringValue(none_zero_map.at(rgraph.root)) << endl;
+    //cout << "y.at(251) = " << stringValue((*y).at(251)) << endl;
     //cout << "root of G: " << rgraph.root << endl;
     /*
     auto root_paths = rgraph.return_root_paths(0);
     for (const auto& el : root_paths) {
         cout << join(el, ',') << endl;
     }*/
+
+    //DEBUG
+    /*
+    auto root = rgraph.root;
+    fixedDouble sum("0");
+    for (auto el : rgraph.G.at(root)) {
+        sum += el.second;
+    }
+
+    //DEBUG
+    cout << "sum at the root is " << stringValue(sum) << endl;
+    sum = fixedDouble("0");
+    for (int i : newF) {
+        sum += (*y).at(i);
+    }
+    cout << "the sum of all facilities y is " << stringValue(sum) << endl;
+    */
     // Round
     map<int, map<int, int>> roundingSolution = bipartitroundingForCharikar::solve(&rgraph);
     map<int, int> roundedVar = cleanRoundingSolution(roundingSolution);
@@ -805,11 +826,35 @@ vector<int> sample(const vector<int>& newF, const set<pair<int, int>>& M, const 
     vector<int> openedF;
     // if y[i] == 0, then i is not in the graph G and therefore not in roundingSolution.
     // To avoid a KeyError y[i] == 0 is tested
+
+    /*
+    //DEBUG
+    sum = fixedDouble("0");
+    fixedDouble other_sum("0");
+    fixedDouble zeroy("0");
+    for (auto el : roundedVar) {
+        if (find((*F).begin(), (*F).end(), el.first) != (*F).end()) {
+            other_sum += el.second;
+            if ((*y).find(el.first) != (*y).end()) {
+                if ((*y).at(el.first) != 0) {
+                    zeroy += el.second;
+                    cout << stringValue(el.second) << endl;
+                }
+            }
+        }
+        sum += el.second;
+    }
+    cout << "the sum of the roundedVar is " << stringValue(sum) << endl;
+    cout << "the other_sum is " << stringValue(other_sum) << endl;
+    cout << "the zeroy is " << stringValue(zeroy) << endl;
+    cout << "both sums should be " << k << endl;
+    */
     for (int i : *F) {
         if ((*y)[i] != 0 and roundedVar[i] == 1) {
             openedF.push_back(i);
         }
     }
+
     return openedF;
 }
 
@@ -912,6 +957,16 @@ pair<kMSolution, bool> solvekUFL(vector<int>* inC, vector<int>* inF, map<int, ma
         //Because of datatypes
         cout << "split F" << endl;
         vector<int> newF = splitFacilities(&originalFToSplits, &removedOriginalFs);
+        //DEBUG
+        /*
+        for (auto el : originalFToSplits) {
+            cout << el.first << "got split into: ";
+            for (auto el2 : el.second) {
+                cout << el2 << ", ";
+            }
+        }
+        cout << endl;
+        */
         // 3. Filtering phase
         //Because of datatypes
         cout << "filterClients" << endl;
@@ -921,6 +976,20 @@ pair<kMSolution, bool> solvekUFL(vector<int>* inC, vector<int>* inF, map<int, ma
         set<int> unbundledFacilities;
         cout << "bundling F" << endl;
         bundlingFacilities(CP, newF, &bundles, &unbundledFacilities);
+
+        //DEBUG
+        /*
+        cout << "251 is in the following bundles: " << endl;
+        for (auto el : bundles) {
+            if(find(el.second.begin(), el.second.end(), 251) != el.second.end()) {
+                cout << "\t" << el.first << endl;
+            }
+        }
+        cout << "bundle 251: " << endl;
+        for (auto el : bundles.at(251)) {
+            cout << "\t" << el << ", " << stringValue((*x).at(251).at(el)) << endl;
+        }
+        */
         delete(newToOldA);
         // 5. Matching phase
         set<int> unmatchedBundles;
@@ -928,6 +997,16 @@ pair<kMSolution, bool> solvekUFL(vector<int>* inC, vector<int>* inF, map<int, ma
         //Because of datatypes
         cout << "matching bundles" << endl;
         matchingBundles(CP, &unmatchedBundles, &M);
+        /*
+        for (auto el : M) {
+            if (el.first == 251) {
+                cout << "251 is matched with " << el.second << endl;
+            }
+            else if (el.second == 251) {
+                cout << "251 is matched with " << el.first << endl;
+            }
+        }
+         */
         // for j in CP:
         //     print('U_' + str(j) + ': ' + str(bundles[j]))
         // for j in unmatchedBundles:

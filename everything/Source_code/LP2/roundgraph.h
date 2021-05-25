@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include "fixedDouble.h"
+#include <iostream>
 
 using namespace std;
 
@@ -32,6 +33,24 @@ class roundgraph {
                 paths.push_back(path);
             }
             return paths;
+        }
+
+        map<int, fixedDouble> get_none_zero_nodes() {
+            map<int, fixedDouble> result;
+            for (auto el : G) {
+                fixedDouble node_sum(0,0);
+                for (auto el2 : el.second) {
+                    node_sum += el2.second;
+                }
+                if (node_sum != 0) {
+                    cout << "node: " << el.first << " has a node_sum of " << stringValue(node_sum) << endl;
+                    for (auto el2 : el.second) {
+                        cout << "\t" << el2.first << ", " << stringValue(el2.second) << endl;
+                    }
+                }
+                result[el.first] = node_sum;
+            }
+            return result;
         }
 };
 
