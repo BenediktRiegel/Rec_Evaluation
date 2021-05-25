@@ -22,7 +22,7 @@ void saveResult(string path, kMSolution S, vector<int> itr, double duration, fix
 	for (int i = 1; i < S.solution.size(); ++i) {
 		solString += "," + to_string(S.solution.at(i));
 	}
-	solString += "]serviceCost=" + stringValue(S.service_cost) + "_otherCost=" + stringValue(S.other_cost) + "_duration=" + to_string(duration) + "ms_itr=";
+	solString += "]_serviceCost=" + stringValue(S.service_cost) + "_otherCost=" + stringValue(S.other_cost) + "_duration=" + to_string(duration) + "ms_itr=";
 	solString += to_string(itr.at(0));
 	for (int i = 1; i < itr.size(); ++i) {
 	    solString += "," + to_string(itr.at(i));
