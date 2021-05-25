@@ -7,3 +7,6 @@ everything/Data/Twitter/EvaluationResults/**/*.txt
 everything/Data/Twitter/sampleEvaluationResults/**/*.txt
 *.o
 *.out
+
+everything/Data/Twitter/byte_matrix.txt
+everything/Data/Twitter/split_ByteM/*.txt
