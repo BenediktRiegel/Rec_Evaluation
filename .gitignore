@@ -1,3 +1,8 @@
 everything/Data/Twitter/dAtoC.txt
 everything/new_versions/LP/LP_Algo_fixedDouble
+everything/Data/Congress/EvaluationResults/**/*.txt
+everything/Data/Congress/sampleEvaluationResults/**/*.txt
+everything/Data/Twitter/EvaluationResults/**/*.txt
+everything/Data/Twitter/sampleEvaluationResults/**/*.txt
 *.o
+*.out
