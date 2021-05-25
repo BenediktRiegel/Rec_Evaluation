@@ -91,6 +91,11 @@ pair<kMSolution, bool> recsolve(vector<int>* C, vector<int>* F, map<int, map<int
         pair<kMSolution, bool> SAndLP = solvekUFL(&newC, &Fsubvec, dAtoC, k, &f, G);
         kMSolution tempS = SAndLP.first;
         bool temp_lp = SAndLP.second;
+        
+        if (tempS.solution.size() != k) {
+            cout << "For m = " << m << ", |S| = " << tempS.solution.size() << " != " << k << " = k" << endl;
+            exit(-1);
+        }
 
         tempS.other_cost = calculate_RCcost(tempS.solution, dFtoF, lam);
         // print out the facilities of the solution and what the costs are for the used median

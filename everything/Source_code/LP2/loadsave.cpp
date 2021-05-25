@@ -36,14 +36,18 @@ map<int, map<int, double>> getDistanceMap(string path) {
     fstream newfile;
     newfile.open(path, ios::in); //open a file to perform read operation using file object
     if (newfile.is_open()) {   //checking whether the file is open
+        //cout << "file is open" << endl;
         string tp;
         int index = 0;
         while (getline(newfile, tp)) { //read data from file object and put it into string.
+            //cout << "split line" << endl;
             vector<string> followers = splitString(tp, ',');
             map<int, double> fIDs;
+            //cout << "followers to double" << endl;
             for (int i = 0; i < followers.size(); ++i) {
                 fIDs[i] = stod(followers.at(i));
             }
+            //cout << "add to G" << endl;
             G[index] = fIDs;
             ++index;
         }
@@ -85,6 +89,28 @@ vector<double> getDoubleVector(string path) {
     }
     return result;
 }
+
+
+vector<vector<int>> getIntVecVec(string path){
+    //auto G = new vector<vector<int>>;
+    vector<vector<int>> G;
+    fstream newfile;
+    newfile.open(path,ios::in); //open a file to perform read operation using file object
+    if (newfile.is_open()){   //checking whether the file is open
+        string tp;
+        while(getline(newfile, tp)){ //read data from file object and put it into string.
+            vector<string> followers = splitString(tp,',');
+            vector<int> fIDs;
+            for (auto & follower : followers) {
+                fIDs.push_back(stoi(follower));
+            }
+            G.push_back(fIDs);
+        }
+        newfile.close(); //close the file object.
+    }
+    return G;
+}
+
 
 vector<vector<int>> getGraphVector(string path){
     //auto G = new vector<vector<int>>;

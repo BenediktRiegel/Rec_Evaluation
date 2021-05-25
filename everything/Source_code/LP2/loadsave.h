@@ -16,6 +16,7 @@ map<int, map<int, double>> getDistanceMap(string path);
 vector<int> getIntVector(string path);
 vector<double> getDoubleVector(string path);
 vector<vector<int>> getGraphVector(string path);
+vector<vector<int>> getIntVecVec(string path);
 
 void reverseFile(string inpath, string outpath);
 void cutFileAfter(string inpath, string outpath, int cutafter);

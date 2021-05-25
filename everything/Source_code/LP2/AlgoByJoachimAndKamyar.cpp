@@ -10,7 +10,7 @@
 
 using namespace std;
 
-double calculate_RCcost(const vector<int>& S, map<int, map<int, double>>* dFtoF, fixedDouble lam) {
+double calculate_RCcost(const vector<int>& S, map<int, map<int, double>>* dFtoF, double lam) {
     //fixedDouble cost = 0;
     double cost = 0;
     for (int i1 = 0; i1 < S.size(); ++i1) {
@@ -18,13 +18,14 @@ double calculate_RCcost(const vector<int>& S, map<int, map<int, double>>* dFtoF,
             cost += (*dFtoF).at(S.at(i1)).at(S.at(i2));
         }
     }
-    cost = cost * lam.getDouble();
+    cost = cost * lam;
     return cost;
 }
 
 
 pair<kMSolution, bool> recsolve(vector<int>* C, vector<int>* F, map<int, map<int, double>>* dFtoF,
-    map<int, map<int, double>>* dAtoC, double lam, int k, const vector<vector<int>>& G){
+                                map<int, map<int, double>>* dAtoC, double lam, int k, const vector<vector<int>>& G,
+                                const vector<vector<int>>& nearest_k, const vector<int>& nearest_f){
 
     kMSolution S;
     S.service_cost = -1;
@@ -35,11 +36,11 @@ pair<kMSolution, bool> recsolve(vector<int>* C, vector<int>* F, map<int, map<int
     pair<kMSolution, bool> result = pair<kMSolution, bool>(S, lp_only);
     //cout << "max number of threads: " << omp_get_max_threads() << endl;
 // guessing the median in F
+#pragma omp declare reduction(minKMS : pair<kMSolution, bool> : omp_out = pair<kMSolution, bool> (((omp_out.first.service_cost == -1 || (omp_in.first.cost() < omp_out.first.cost())) ? omp_in.first : omp_out.first), (omp_in.second && omp_out.second))) initializer (omp_priv=omp_orig)
+#pragma omp parallel for reduction(minKMS:result)
 //pragma omp declare reduction(minKMS : pair<kMSolution, bool> : omp_out = ((omp_out.first.service_cost == -1 || (omp_in.first.cost() < omp_out.first.cost())) ? omp_in.first : omp_out.first), (omp_in.second && omp_out.second)) initializer (omp_priv=omp_orig)
 //pragma omp parallel for reduction(minKMS:result)
 //#pragma omp parallel for
-#pragma omp declare reduction(minKMS : pair<kMSolution, bool> : omp_out = pair<kMSolution, bool> (((omp_out.first.service_cost == -1 || (omp_in.first.cost() < omp_out.first.cost())) ? omp_in.first : omp_out.first), (omp_in.second && omp_out.second))) initializer (omp_priv=omp_orig)
-#pragma omp parallel for reduction(minKMS:result)
     for (int p = 0; p < (*F).size(); ++p) {
         int m = (*F).at(p);
     //for (int test = 0; test < 4; ++test) {
@@ -55,7 +56,30 @@ pair<kMSolution, bool> recsolve(vector<int>* C, vector<int>* F, map<int, map<int
         for (int i : *F) {
             f[i] = k - 1.0 * lam * (*dFtoF)[i][m];
         }
-
+        vector<int> Fsubvec;
+        vector<int> newC;
+        // Get Fsubvec and newC
+        {
+            set<int> Fsubset;
+            set<int> Cset;
+            for (int i = 0; i < k; ++i) {
+                Fsubset.insert(nearest_k.at(m).at(i));
+                Cset.insert(nearest_k.at(m).at(i));
+            }
+            for (int i = 0; i < (*C).size(); ++i) {
+                Fsubset.insert(nearest_f.at((*C).at(i)));
+                Cset.insert(nearest_f.at((*C).at(i)));
+            }
+            for (int el : *C) {
+                Cset.insert(el);
+            }
+            for (int el : Fsubset) {
+                Fsubvec.push_back(el);
+            }
+            for (int el : Cset) {
+                newC.push_back(el);
+            }
+        }
         // print('(k - 1) * lam * dFtoF[i, m] = ' + str(k-1) + ' * ' + str(lam) + ' * ' + str(dFtoF[i, m]) + ' = ' + str((k - 1) * lam * dFtoF[i, m]))
 
         // use localSearch or Charikar/Li Algo, depending on which is wanted
@@ -64,9 +88,14 @@ pair<kMSolution, bool> recsolve(vector<int>* C, vector<int>* F, map<int, map<int
             (tempS, tempCost) = LocalSearchkUFL.solve(C, F, k, dFtoC, f)
         else:*/
 
-        pair<kMSolution, bool> SAndLP = solvekUFL(C, F, dAtoC, k, &f, G);
+        pair<kMSolution, bool> SAndLP = solvekUFL(&newC, &Fsubvec, dAtoC, k, &f, G);
         kMSolution tempS = SAndLP.first;
         bool temp_lp = SAndLP.second;
+        
+        if (tempS.solution.size() != k) {
+            cout << "For m = " << m << ", |S| = " << tempS.solution.size() << " != " << k << " = k" << endl;
+            exit(-1);
+        }
 
         tempS.other_cost = calculate_RCcost(tempS.solution, dFtoF, lam);
         // print out the facilities of the solution and what the costs are for the used median

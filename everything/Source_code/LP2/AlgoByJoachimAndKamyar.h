@@ -8,6 +8,7 @@
 using namespace std;
 
 pair<kMSolution, bool> recsolve(vector<int>* C, vector<int>* F, map<int, map<int, double>>* dFtoF,
-    map<int, map<int, double>>* dAtoC, double lam, int k, const vector<vector<int>>& G);
+                                map<int, map<int, double>>* dAtoC, double lam, int k, const vector<vector<int>>& G,
+                                const vector<vector<int>>& nearest_k, const vector<int>& nearest_f);
 
 #endif //BAALGO_ALGOBYJOACHIMANDKAMYAR_H

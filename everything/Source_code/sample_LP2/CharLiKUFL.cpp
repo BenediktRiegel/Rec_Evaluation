@@ -519,7 +519,7 @@ void matchingBundles(const set<int>& CP, set<int>* unmatchedBundles, set<pair<in
 
         (*M).insert(minPair);
         (*unmatchedBundles).erase(minPair.first);
-        (*unmatchedBundles).erase(minPair.first);
+        (*unmatchedBundles).erase(minPair.second);
     }
 }
 

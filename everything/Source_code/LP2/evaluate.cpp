@@ -14,7 +14,7 @@ using namespace std;
 
 
 void saveResult(string path, kMSolution S, bool lp_only, double duration, double lam, int k) {
-	string filepath = path + "EvaluationResults/LP/k=" + to_string(k) + "_lam=" + to_string(lam) + ".txt";
+	string filepath = path + "sampleEvaluationResults/LP/k=" + to_string(k) + "_lam=" + to_string(lam) + ".txt";
 	cout << "saving to " << filepath << endl;
 	string result;
 	result += "S=";
@@ -38,18 +38,23 @@ void evalFpartC(string path, int num_runs) {
 	//Remember F <= C (subset equal) and F = [0, |F|)
 	cout << "read data" << endl;
 	map<int, map<int, double>> dAtoC = getDistanceMap(path + "dAtoC.txt");
+    cout << "read G" << endl;
 	vector<vector<int>> G = getGraphVector(path + "G.txt");
 	//string FtoFpath = path + "dFtoF.txt";
 	//map<int, map<int, double>> dFtoF = getDistanceMap(FtoFpath);
 
 	cout << "Create C and F" << endl;
-	vector<int> C = getIntVector(path + "C.txt");
+	vector<int> C = getIntVector(path + "sampled_C.txt");
 
 	vector<int> F = getIntVector(path + "F.txt");
 
 	vector<int> ks = getIntVector(path + "k.txt");
 
 	vector<double> lams = getDoubleVector(path + "lam.txt");
+	cout << "read nearest_k.txt" << endl;
+    vector<vector<int>> nearest_k = getIntVecVec(path + "nearest_k.txt");
+    cout << "read nearest_f.txt" << endl;
+    vector<int> nearest_f = getIntVector(path + "nearest_f.txt");
 
 	/*
 	for (int c : C){
@@ -61,26 +66,26 @@ void evalFpartC(string path, int num_runs) {
 	}*/
 
 	cout << "start evalutaion" << endl;
-	vector<vector<bool>> pure_LP;
-	pure_LP.reserve(ks.size() * lams.size());
-	for (int k : ks) {
-	    vector<bool> temp;
-	    temp.reserve(lams.size());
-	    for (double lam : lams) {
-	        temp.push_back(false);
-	    }
-	    pure_LP.push_back(temp);
-	}
+    vector<vector<bool>> pure_LP;
+    pure_LP.reserve(ks.size() * lams.size());
+    for (int k : ks) {
+        vector<bool> temp;
+        temp.reserve(lams.size());
+        for (double lam : lams) {
+            temp.push_back(false);
+        }
+        pure_LP.push_back(temp);
+    }
     for (int run = 0; run < num_runs; ++run) {
+        cout << "run " << run << endl;
         for (int i = 0; i < ks.size(); ++i) {
             int k = ks.at(i);
             for (int j = 0; j < ks.size(); ++j) {
                 double lam = lams.at(j);
                 if (!pure_LP.at(i).at(j)) {
                     cout << "k: " << k << ", lam: " << stringValue(lam) << endl;
-                    cout << "run " << run << endl;
                     auto t_start = std::chrono::high_resolution_clock::now();
-                    pair<kMSolution, bool> S = (recsolve(&C, &F, &dAtoC, &dAtoC, lam, k, G));
+                    pair<kMSolution, bool> S = (recsolve(&C, &F, &dAtoC, &dAtoC, lam, k, G, nearest_k, nearest_f));
                     auto t_end = std::chrono::high_resolution_clock::now();
                     double duration = std::chrono::duration<double, std::milli>(t_end - t_start).count();
 
@@ -90,10 +95,10 @@ void evalFpartC(string path, int num_runs) {
                         pure_LP[i][j] = true;
                     }
                 }
-            }
-            cout << "runs finished\n\n\n" << endl;
-        }
-    }
+			}
+		}
+        cout << "runs finished\n\n\n" << endl;
+	}
 	cout << "Done" << endl;
 
 
@@ -112,14 +117,17 @@ void evalTwitter(string path, int num_runs) {
 	vector<vector<int>> G = getGraphVector(Gpath);
 	string FtoFpath = path + "dFtoF.txt";
 	map<int, map<int, double>> dFtoF = getDistanceMap(FtoFpath);
+    vector<vector<int>> nearest_k = getIntVecVec(path + "nearest_k.txt");
+    vector<int> nearest_f = getIntVector(path + "nearest_f.txt");
 
 	cout << "Create C and F" << endl;
-	vector<int> C;
+	vector<int> C = getIntVector(path + "sampled_C.txt");
+	/*
 	C.reserve(dAtoC[0].size());
 	for (int i = 0; i < dAtoC[0].size(); ++i) {
 		C.push_back(i);
 	}
-	
+	*/
 	vector<int> F = getIntVector(path + "F.txt");
 
 	cout << "start evalutaion" << endl;
@@ -129,7 +137,7 @@ void evalTwitter(string path, int num_runs) {
 			for (double lam : lams) {
 				cout << "k: " << k << ", lam: " << stringValue(lam) << endl;
 				auto t_start = std::chrono::high_resolution_clock::now();
-				pair<kMSolution, bool> S = (recsolve(&C, &F, &dFtoF, &dAtoC, lam, k, G));
+				pair<kMSolution, bool> S = (recsolve(&C, &F, &dFtoF, &dAtoC, lam, k, G, nearest_k, nearest_f));
 				auto t_end = std::chrono::high_resolution_clock::now();
 				double duration = std::chrono::duration<double, std::milli>(t_end - t_start).count();
 	
