@@ -9,11 +9,12 @@
 #include "loadsave.h"
 #include "AlgoByJoachimAndKamyar.h"
 #include "fixedDouble.h"
+#include "SampleData.h"
 
 using namespace std;
 
 
-void saveResult(string path, kMSolution S, bool lp_only, double duration, double lam, int k) {
+void saveResult(string path, kMSolution S, bool lp_only, double duration, double lam, int k, const vector<int>& C) {
 	string filepath = path + "sampleEvaluationResults/LP/k=" + to_string(k) + "_lam=" + to_string(lam) + ".txt";
 	cout << "saving to " << filepath << endl;
 	string result;
@@ -33,7 +34,7 @@ void saveResult(string path, kMSolution S, bool lp_only, double duration, double
 }
 
 
-void evalFpartC(string path, int num_runs) {
+void evalFpartC(string path, int num_runs, int version) {
 	cout << "Starting evalFpartC" << endl;
 	//Remember F <= C (subset equal) and F = [0, |F|)
 	cout << "read data" << endl;
@@ -44,13 +45,17 @@ void evalFpartC(string path, int num_runs) {
 	//map<int, map<int, double>> dFtoF = getDistanceMap(FtoFpath);
 
 	cout << "Create C and F" << endl;
-	vector<int> C = getIntVector(path + "sampled_C.txt");
+	vector<int> sampled_C = getIntVector(path + "sampled_C.txt");
+    vector<int> sample_amounts = {(int)sampled_C.size()};
+    if (version <= 1) {
+        sample_amounts = getIntVector(path + "sample_amounts.txt");
+    }
 
 	vector<int> F = getIntVector(path + "F.txt");
 
-	vector<int> ks = getIntVector(path + "k.txt");
+	vector<int> ks = getIntVector(path + "sample_k.txt");
 
-	vector<double> lams = getDoubleVector(path + "lam.txt");
+	vector<double> lams = getDoubleVector(path + "sample_lam.txt");
 	cout << "read nearest_k.txt" << endl;
     vector<vector<int>> nearest_k = getIntVecVec(path + "nearest_k.txt");
     cout << "read nearest_f.txt" << endl;
@@ -64,6 +69,11 @@ void evalFpartC(string path, int num_runs) {
 			}
 		}
 	}*/
+    cout << "F.size(): " << F.size() << endl;
+    cout << "sampled_C.size(): " << sampled_C.size() << endl;
+    cout << "test" << endl;
+    cout << "sample_amounts.size(): " << sample_amounts.size() << endl;
+    cout << "dAtoC.size(): " << dAtoC.size() << endl;
 
 	cout << "start evalutaion" << endl;
     vector<vector<bool>> pure_LP;
@@ -78,25 +88,30 @@ void evalFpartC(string path, int num_runs) {
     }
     for (int run = 0; run < num_runs; ++run) {
         cout << "run " << run << endl;
-        for (int i = 0; i < ks.size(); ++i) {
-            int k = ks.at(i);
-            for (int j = 0; j < ks.size(); ++j) {
-                double lam = lams.at(j);
-                if (!pure_LP.at(i).at(j)) {
-                    cout << "k: " << k << ", lam: " << stringValue(lam) << endl;
-                    auto t_start = std::chrono::high_resolution_clock::now();
-                    pair<kMSolution, bool> S = (recsolve(&C, &F, &dAtoC, &dAtoC, lam, k, G, nearest_k, nearest_f));
-                    auto t_end = std::chrono::high_resolution_clock::now();
-                    double duration = std::chrono::duration<double, std::milli>(t_end - t_start).count();
+        for (int amount : sample_amounts) {
+            // Increase the size of C.
+            cout << "num_to_be_sampled: " << amount << endl;
+            vector<int> C = D_sampling(sampled_C, G, amount);
+            for (int i = 0; i < ks.size(); ++i) {
+                int k = ks.at(i);
+                for (int j = 0; j < ks.size(); ++j) {
+                    double lam = lams.at(j);
+                    if (!pure_LP.at(i).at(j)) {
+                        cout << "k: " << k << ", lam: " << stringValue(lam) << endl;
+                        auto t_start = std::chrono::high_resolution_clock::now();
+                        pair<kMSolution, bool> S = (recsolve(&C, &F, &dAtoC, &dAtoC, lam, k, G, nearest_k, nearest_f));
+                        auto t_end = std::chrono::high_resolution_clock::now();
+                        double duration = std::chrono::duration<double, std::milli>(t_end - t_start).count();
 
-                    saveResult(path, S.first, S.second, duration, lam, k);
-                    if (S.second) {
-                        cout << "Everything was LP_only" << endl;
-                        pure_LP[i][j] = true;
+                        saveResult(path, S.first, S.second, duration, lam, k, C);
+                        if (S.second) {
+                            cout << "Everything was LP_only" << endl;
+                            pure_LP[i][j] = true;
+                        }
                     }
                 }
-			}
-		}
+            }
+        }
         cout << "runs finished\n\n\n" << endl;
 	}
 	cout << "Done" << endl;
@@ -141,7 +156,7 @@ void evalTwitter(string path, int num_runs) {
 				auto t_end = std::chrono::high_resolution_clock::now();
 				double duration = std::chrono::duration<double, std::milli>(t_end - t_start).count();
 	
-				saveResult(path, S.first, S.second, duration, lam, k);
+				saveResult(path, S.first, S.second, duration, lam, k, vector<int>{-1});
 			}
 		}
 		cout << "end run " << run << "\n\n\n" << endl;

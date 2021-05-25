@@ -9,8 +9,8 @@ using namespace std;
 
 
 int main(int argc, char* argv[]) {
-    if (argc != 3) {
-        cout << "Exactly 3 parameters are required one is the default and the other is a path to the data and the number of runs" << endl;
+    if (argc != 4) {
+        cout << "Exactly 4 parameters are required one is the default and the other is a path to the data and the number of runs and the fourth is the version" << endl;
         exit(1);
     }
     /*
@@ -34,7 +34,8 @@ int main(int argc, char* argv[]) {
     //string path = "C:/Users/Benedikt/source/repos/VisBaAlgo/VisBaAlgo/TestChariLi/Twitter/";
     string path = argv[1];
     int num_runs = stoi(argv[2]);
-    evalFpartC(path, num_runs);
+    int version = stoi(argv[3]);
+    evalFpartC(path, num_runs, version);
     //for (int i = 0; i < 8; ++i) {
     //test_ChariLi(path, 5, fixedDouble(0, 0), 0);
     //}

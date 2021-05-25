@@ -47,8 +47,8 @@ void evalTwitter(string path, int num_runs, int version) {
 	cout << "Starting evaluation" << endl;
 	//Remember F <= C (subset equal) and F = [0, |F|)
 	cout << "read data" << endl;
-    vector<int> ks = getIntVector(path + "k.txt");
-    vector<double> lams = getDoubleVector(path + "lam.txt");
+    vector<int> ks = getIntVector(path + "sample_k.txt");
+    vector<double> lams = getDoubleVector(path + "sample_lam.txt");
 	vector<vector<double>> dAtoC = getDistanceVector(path + "dAtoC.txt");
 	vector<vector<int>> nearest_k = getIntVecVec(path + "nearest_k.txt");
 	vector<int> nearest_f = getIntVector(path + "nearest_f.txt");

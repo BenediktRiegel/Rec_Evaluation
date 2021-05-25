@@ -1,7 +1,7 @@
 SYSTEM     = x86-64_linux
 LIBFORMAT  = static_pic
 
-CCC = g++ -std=c++11 -fopenmp
+CCC = g++ -fopenmp
 
 CPLEX_STUDIO = /opt/ibm/ILOG/CPLEX_Studio201
 
@@ -42,6 +42,7 @@ clean:
 	rm -f CharLiKUFL.o
 	rm -f BFS.o
 	rm -f bipartitroundingForCharikar.o
+	rm -f SampleData.o
 
 
 build:	main
@@ -49,12 +50,12 @@ build:	main
 
 # Warning BINDIST
 main: main.o
-	$(CCC) $(CCFLAGS) $(CCLNDIRS) -o sample_LP_Algo main.o evaluate.o kMSolution.o loadsave.o AlgoByJoachimAndKamyar.o CharLiKUFL.o BFS.o bipartitroundingForCharikar.o fixedDouble.o $(CCLNFLAGS)
+	$(CCC) $(CCFLAGS) $(CCLNDIRS) -o sample_LP_Algo main.o evaluate.o kMSolution.o loadsave.o AlgoByJoachimAndKamyar.o CharLiKUFL.o BFS.o bipartitroundingForCharikar.o fixedDouble.o SampleData.o $(CCLNFLAGS)
 
 main.o: main.cpp evaluate.o
 	$(CCC) -c main.cpp -o main.o
 	
-evaluate.o: kMSolution.o loadsave.o fixedDouble.o AlgoByJoachimAndKamyar.o
+evaluate.o: kMSolution.o loadsave.o fixedDouble.o AlgoByJoachimAndKamyar.o SampleData.o
 	$(CCC) -c evaluate.cpp -o evaluate.o
 
 kMSolution.o:
@@ -77,3 +78,6 @@ BFS.o:
 
 bipartitroundingForCharikar.o:
 	$(CCC) -c bipartitroundingForCharikar.cpp -o bipartitroundingForCharikar.o
+
+SampleData.o:
+	$(CCC) -c SampleData.cpp -o SampleData.o
