@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <fstream>
 #include "BFS.h"
+#include <map>
 
 using namespace std;
 
@@ -61,6 +62,7 @@ void save_new_c(const string& path, int new_c) {
 
 
 double compute_score_sum(const vector<unsigned long> inv_scores, const vector<int>& old_C) {
+    cout << "compute_score_sum" << endl;
 	double score_sum = 0;
 	for (int c : old_C) {
 		score_sum += (1.0 / inv_scores.at(c));
@@ -75,6 +77,7 @@ double compute_score_sum(const vector<unsigned long> inv_scores, const vector<in
 void init_D_sampling(vector<unsigned long>* scores, vector<int>* old_C, vector<int>* new_C,
                      const vector<vector<int>>& G) {
     //init random generator
+    cout << "init D sampling" << endl;
     uniform_int_distribution<> rd_int(0, (*old_C).size() - 1);
 
     // Chose first new_c randomly and uniformly for all old_c
@@ -82,7 +85,9 @@ void init_D_sampling(vector<unsigned long>* scores, vector<int>* old_C, vector<i
     (*new_C).push_back((*old_C).at(rd_index));
     (*old_C).erase((*old_C).begin() + rd_index);
     //compute distances between old_C and new_C
+    cout << "do bfs for " << (*new_C).at(0) << endl;
     vector<int> distances = bfs(G, (*new_C).at(0));
+    cout << "update scores" << endl;
     for (int i = 0; i < distances.size(); ++i) {
         if (i == rd_index) {
             (*scores).push_back(0);
@@ -97,9 +102,11 @@ void init_D_sampling(vector<unsigned long>* scores, vector<int>* old_C, vector<i
 void sample_next_C(vector<unsigned long>* inv_scores, vector<int>* old_C, vector<int>* new_C,
                const vector<vector<int>>& G, double rd) {
 
+    cout << "function sample next C" << endl;
     auto prob = compute_score_sum(*inv_scores, *old_C) * rd;
     double current = 0;
     int to_add_index = 0;
+    cout << "chose next C" << endl;
     for (int index = 0; index < (*old_C).size(); ++index) {
         current += 1.0 / (*inv_scores).at((*old_C).at(index));
         if (prob < current) {
@@ -108,9 +115,11 @@ void sample_next_C(vector<unsigned long>* inv_scores, vector<int>* old_C, vector
         }
     }
     int to_add_c = (*old_C).at(to_add_index);
+    cout << "do bfs for " << to_add_c << endl;
     vector<int> distances = bfs(G, to_add_c);
     (*old_C).erase((*old_C).begin() + to_add_index);
 
+    cout << "update scores" << endl;
     for (int old_c : (*old_C)) {
         (*inv_scores)[old_c] += distances.at(old_c);
         if ((*inv_scores).at(old_c) < 0) {
@@ -135,7 +144,7 @@ vector<int> D_sampling(vector<int> old_C, const vector<vector<int>>& G, int new_
     vector<unsigned long> scores;
     vector<int> new_C;
     init_D_sampling(&scores, &old_C, &new_C, G);
-	//cout << "added " << new_C.at(0) << endl;
+	cout << "added " << new_C.at(0) << endl;
 	//cout << "scores\n\t";
 	//print_vec(scores);
     new_amount -= 1;
@@ -144,7 +153,7 @@ vector<int> D_sampling(vector<int> old_C, const vector<vector<int>>& G, int new_
     uniform_real_distribution<> rd_prob(0, 1);
     for (int i = 0; i < new_amount; ++i) {
         sample_next_C(&scores, &old_C, &new_C, G, rd_prob(random_engine));
-		//cout << "added " << new_C.back() << endl;
+		cout << "added " << new_C.back() << endl;
 		//cout << "scores\n\t";
 		//print_vec(scores);
 		//print_actual_score_sum(scores, old_C);
@@ -155,7 +164,7 @@ vector<int> D_sampling(vector<int> old_C, const vector<vector<int>>& G, int new_
 
 
 
-double test_compute_score_sum(const vector<double>& inv_scores, const vector<int>& old_C) {
+double fullMatrix_compute_score_sum(const vector<double>& inv_scores, const vector<int>& old_C) {
     double score_sum = 0;
     for (int c : old_C) {
         score_sum += (1.0 / inv_scores.at(c));
@@ -167,8 +176,8 @@ double test_compute_score_sum(const vector<double>& inv_scores, const vector<int
 }
 
 
-void test_init_D_sampling(vector<double>* scores, vector<int>* old_C, vector<int>* new_C,
-                     const vector<vector<double>>& dAtoC) {
+void fullMatrix_init_D_sampling(vector<double>* scores, vector<int>* old_C, vector<int>* new_C,
+                                const map<int, map<int, double>>& dAtoC) {
     //init random generator
     uniform_int_distribution<> rd_int(0, (*old_C).size() - 1);
 
@@ -177,7 +186,7 @@ void test_init_D_sampling(vector<double>* scores, vector<int>* old_C, vector<int
     (*new_C).push_back((*old_C).at(rd_index));
     (*old_C).erase((*old_C).begin() + rd_index);
     //compute distances between old_C and new_C
-    vector<double> distances = dAtoC.at((*new_C).at(0));
+    map<int, double> distances = dAtoC.at((*new_C).at(0));
     for (int i = 0; i < distances.size(); ++i) {
         if (i == rd_index) {
             (*scores).push_back(0);
@@ -189,10 +198,10 @@ void test_init_D_sampling(vector<double>* scores, vector<int>* old_C, vector<int
 }
 
 
-void test_sample_next_C(vector<double>* inv_scores, vector<int>* old_C, vector<int>* new_C,
-                   const vector<vector<double>>& dAtoC, double rd) {
+void fullMatrix_sample_next_C(vector<double>* inv_scores, vector<int>* old_C, vector<int>* new_C,
+                              const map<int, map<int, double>>& dAtoC, double rd) {
 
-    auto prob = test_compute_score_sum(*inv_scores, *old_C) * rd;
+    auto prob = fullMatrix_compute_score_sum(*inv_scores, *old_C) * rd;
     double current = 0;
     int to_add_index = 0;
     for (int index = 0; index < (*old_C).size(); ++index) {
@@ -205,7 +214,7 @@ void test_sample_next_C(vector<double>* inv_scores, vector<int>* old_C, vector<i
     //cout << "dAtoC.size(): " << dAtoC.size() << endl;
     int to_add_c = (*old_C).at(to_add_index);
 
-    vector<double> distances = dAtoC.at(to_add_c);
+    map<int, double> distances = dAtoC.at(to_add_c);
     (*old_C).erase((*old_C).begin() + to_add_index);
 
     for (int old_c : (*old_C)) {
@@ -219,14 +228,14 @@ void test_sample_next_C(vector<double>* inv_scores, vector<int>* old_C, vector<i
 }
 
 
-vector<int> test_D_sampling(vector<int> old_C, const vector<vector<double>>& dAtoC, int new_amount) {
+vector<int> fullMatrix_D_sampling(vector<int> old_C, const map<int, map<int, double>>& dAtoC, int new_amount) {
     if (old_C.size() < new_amount) {
         return old_C;
     }
     vector<double> scores;
     vector<int> new_C;
     //cout << "init D_sampling" << endl;
-    test_init_D_sampling(&scores, &old_C, &new_C, dAtoC);
+    fullMatrix_init_D_sampling(&scores, &old_C, &new_C, dAtoC);
     //cout << "added " << new_C.at(0) << endl;
     //cout << "scores\n\t";
     //print_vec(scores);
@@ -235,7 +244,7 @@ vector<int> test_D_sampling(vector<int> old_C, const vector<vector<double>>& dAt
     //init random prob generator
     uniform_real_distribution<> rd_prob(0, 1);
     for (int i = 0; i < new_amount; ++i) {
-        test_sample_next_C(&scores, &old_C, &new_C, dAtoC, rd_prob(random_engine));
+        fullMatrix_sample_next_C(&scores, &old_C, &new_C, dAtoC, rd_prob(random_engine));
         //cout << "added " << new_C.back() << endl;
         //cout << "scores\n\t";
         //print_vec(scores);

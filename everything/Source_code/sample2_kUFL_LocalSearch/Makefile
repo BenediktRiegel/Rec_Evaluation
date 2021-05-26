@@ -11,10 +11,10 @@ clean:
 	rm -f fixedDouble.o
 	rm -f SampleData.o
 	rm -f BFS.o
-	rm -f sample_kUFL_LocalSearch
+	rm -f sample2_kUFL_LocalSearch
 
 build: evaluateTwitter.o kMSolution.o loadsave.o AlgoByJoachimAndKamyar.o vectorEkUFL_LocalSearch.o fixedDouble.o SampleData.o BFS.o
-	$(CCC) -o sample_kUFL_LocalSearch main.cpp evaluateTwitter.o vectorEkUFL_LocalSearch.o AlgoByJoachimAndKamyar.o kMSolution.o loadsave.o fixedDouble.o BFS.o SampleData.o
+	$(CCC) -o sample2_kUFL_LocalSearch main.cpp evaluateTwitter.o vectorEkUFL_LocalSearch.o AlgoByJoachimAndKamyar.o kMSolution.o loadsave.o fixedDouble.o BFS.o SampleData.o
 
 AlgoByJoachimAndKamyar.o:
 	$(CCC) -c AlgoByJoachimAndKamyar.cpp -o AlgoByJoachimAndKamyar.o

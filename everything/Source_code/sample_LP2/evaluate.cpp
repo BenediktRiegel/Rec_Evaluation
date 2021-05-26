@@ -38,14 +38,14 @@ void evalFpartC(string path, int num_runs, int version) {
 	cout << "Starting evalFpartC" << endl;
 	//Remember F <= C (subset equal) and F = [0, |F|)
 	cout << "read data" << endl;
-	map<int, map<int, double>> dAtoC = getDistanceMap(path + "dAtoC.txt");
+	map<int, map<int, double>> dAtoC = getDistanceMap(path + "full_dAtoC.txt");
     cout << "read G" << endl;
 	vector<vector<int>> G = getGraphVector(path + "G.txt");
 	//string FtoFpath = path + "dFtoF.txt";
 	//map<int, map<int, double>> dFtoF = getDistanceMap(FtoFpath);
 
 	cout << "Create C and F" << endl;
-	vector<int> sampled_C = getIntVector(path + "sampled_C.txt");
+	vector<int> sampled_C = getIntVector(path + "translated_sampled_C.txt");
     vector<int> sample_amounts = {(int)sampled_C.size()};
     if (version <= 1) {
         sample_amounts = getIntVector(path + "sample_amounts.txt");
@@ -69,6 +69,8 @@ void evalFpartC(string path, int num_runs, int version) {
 			}
 		}
 	}*/
+    cout << "nearest_f.size(): " << nearest_f.size() << endl;
+    cout << "nearest_k.size(): " << nearest_k.size() << endl;
     cout << "F.size(): " << F.size() << endl;
     cout << "sampled_C.size(): " << sampled_C.size() << endl;
     cout << "test" << endl;
@@ -91,7 +93,7 @@ void evalFpartC(string path, int num_runs, int version) {
         for (int amount : sample_amounts) {
             // Increase the size of C.
             cout << "num_to_be_sampled: " << amount << endl;
-            vector<int> C = D_sampling(sampled_C, G, amount);
+            vector<int> C = fullMatrix_D_sampling(sampled_C, dAtoC, amount);
             for (int i = 0; i < ks.size(); ++i) {
                 int k = ks.at(i);
                 for (int j = 0; j < ks.size(); ++j) {

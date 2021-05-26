@@ -163,7 +163,7 @@ vector<int> D_sampling(vector<int> old_C, const vector<vector<int>>& G, int new_
 
 
 
-double test_compute_score_sum(const vector<double>& inv_scores, const vector<int>& old_C) {
+double fullMatrix_compute_score_sum(const vector<double>& inv_scores, const vector<int>& old_C) {
     double score_sum = 0;
     for (int c : old_C) {
         score_sum += (1.0 / inv_scores.at(c));
@@ -175,7 +175,7 @@ double test_compute_score_sum(const vector<double>& inv_scores, const vector<int
 }
 
 
-void test_init_D_sampling(vector<double>* scores, vector<int>* old_C, vector<int>* new_C,
+void fullMatrix_init_D_sampling(vector<double>* scores, vector<int>* old_C, vector<int>* new_C,
                      const vector<vector<double>>& dAtoC) {
     //init random generator
     uniform_int_distribution<> rd_int(0, (*old_C).size() - 1);
@@ -197,10 +197,10 @@ void test_init_D_sampling(vector<double>* scores, vector<int>* old_C, vector<int
 }
 
 
-void test_sample_next_C(vector<double>* inv_scores, vector<int>* old_C, vector<int>* new_C,
+void fullMatrix_sample_next_C(vector<double>* inv_scores, vector<int>* old_C, vector<int>* new_C,
                    const vector<vector<double>>& dAtoC, double rd) {
 
-    auto prob = test_compute_score_sum(*inv_scores, *old_C) * rd;
+    auto prob = fullMatrix_compute_score_sum(*inv_scores, *old_C) * rd;
     double current = 0;
     int to_add_index = 0;
     for (int index = 0; index < (*old_C).size(); ++index) {
@@ -227,14 +227,14 @@ void test_sample_next_C(vector<double>* inv_scores, vector<int>* old_C, vector<i
 }
 
 
-vector<int> test_D_sampling(vector<int> old_C, const vector<vector<double>>& dAtoC, int new_amount) {
+vector<int> fullMatrix_D_sampling(vector<int> old_C, const vector<vector<double>>& dAtoC, int new_amount) {
     if (old_C.size() < new_amount) {
         return old_C;
     }
     vector<double> scores;
     vector<int> new_C;
     //cout << "init D_sampling" << endl;
-    test_init_D_sampling(&scores, &old_C, &new_C, dAtoC);
+    fullMatrix_init_D_sampling(&scores, &old_C, &new_C, dAtoC);
     //cout << "added " << new_C.at(0) << endl;
     //cout << "scores\n\t";
     //print_vec(scores);
@@ -243,7 +243,7 @@ vector<int> test_D_sampling(vector<int> old_C, const vector<vector<double>>& dAt
     //init random prob generator
     uniform_real_distribution<> rd_prob(0, 1);
     for (int i = 0; i < new_amount; ++i) {
-        test_sample_next_C(&scores, &old_C, &new_C, dAtoC, rd_prob(random_engine));
+        fullMatrix_sample_next_C(&scores, &old_C, &new_C, dAtoC, rd_prob(random_engine));
         //cout << "added " << new_C.back() << endl;
         //cout << "scores\n\t";
         //print_vec(scores);

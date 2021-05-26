@@ -56,10 +56,10 @@ void solveLP() {
     IloExpr expr0(env);
     for (int i = 0; i < (*F).size(); ++i) {
         for (int j = 0; j < (*C).size(); ++j) {
-            expr0 += (cpX[i][j] * (*dAtoC)[(*F)[i]][(*C)[j]]);
+            expr0 += (cpX[i][j] * (*dAtoC).at((*F).at(i)).at((*C).at(j)));
         }
         //cout << i << endl;
-        expr0 += ((cpY[i]) * ((*f)[(*F)[i]]));
+        expr0 += ((cpY[i]) * ((*f).at((*F).at(i))));
     }
     Model.add(IloMinimize(env, expr0));
 
@@ -217,7 +217,7 @@ map<int, double> computeDav() {
     for (int j : *C) {
         temp = 0;
         for (int i : *F) {
-            temp += dAtoC->at(i).at(j) * x->at(i).at(j).getDouble();
+            temp += (*dAtoC).at(i).at(j) * x->at(i).at(j).getDouble();
         }
         dav[j] = temp;
     }
@@ -226,7 +226,7 @@ map<int, double> computeDav() {
 
 
 double newdAtoC(int a, int j) {
-    return (*dAtoC)[(*newToOldA)[a]][j];
+    return (*dAtoC).at((*newToOldA).at(a)).at(j);
 }
 
 
@@ -237,8 +237,8 @@ set<int> splitOneFacility(int i) {
     set<fixedDouble> differentX;
     set<int> connectedC;
     for (int j : *C) {
-        if ((*x)[i][j] != 0) {
-            differentX.insert((*x)[i][j]);
+        if ((*x).at(i).at(j) != 0) {
+            differentX.insert((*x).at(i).at(j));
             connectedC.insert(j);
         }
     }
@@ -267,16 +267,16 @@ set<int> splitOneFacility(int i) {
                 (*newToOldA).push_back(i);
                 newFacilities.insert(facility);
                 //(*y).set(facility, differences_betw_x[i2]);
-                (*y)[facility] = differences_betw_x[i2];
+                (*y)[facility] = differences_betw_x.at(i2);
                 set<int> to_keep_C;
                 // connect clients to facility, if x_ij is higher or equal, than differentX. Otherwise delete them from the set.
                 for (int j : connectedC) {
                     if ((*x)[i][j] > *itrDiffX) {
-                        (*x)[facility][j] = (*y)[facility];
+                        (*x)[facility][j] = (*y).at(facility);
                         to_keep_C.insert(j);
                     }
                     else if ((*x)[i][j] == *itrDiffX) {
-                        (*x)[facility][j] = (*y)[facility];
+                        (*x)[facility][j] = (*y).at(facility);
                         (*x)[i][j] = 0; // Remove connections between the original facility and all clients
                     }
                     else {

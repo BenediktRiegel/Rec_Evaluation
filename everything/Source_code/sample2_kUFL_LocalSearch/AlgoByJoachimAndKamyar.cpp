@@ -79,6 +79,8 @@ pair<kMSolution, vector<int>> recsolve(vector<int>* C, vector<int>* F, vector<ve
                 newC.push_back(el);
             }
         }
+        cout << "newC.size(): " << newC.size() << endl;
+        cout << "Fsubvec.size(): " << Fsubvec.size() << endl;
         pair<kMSolution, int> SAndItr = localsearchkUFL(&newC, &Fsubvec, dAtoC, k, &f);
 
         kMSolution tempS = SAndItr.first;

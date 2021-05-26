@@ -23,7 +23,7 @@ void saveResult(string path, kMSolution S, vector<int> itr, double duration, dou
 	for (int i = 1; i < S.solution.size(); ++i) {
 		solString += "," + to_string(S.solution.at(i));
 	}
-	solString += "]_serviceCost=" + stringValue(S.service_cost) + "_otherCost=" + stringValue(S.other_cost) + "_duration=" + to_string(duration) + "ms_itr=";
+	solString += "]_serviceCost=" + to_string(S.service_cost) + "_otherCost=" + to_string(S.other_cost) + "_duration=" + to_string(duration) + "ms_itr=";
 	solString += to_string(itr.at(0));
 	for (int i = 1; i < itr.size(); ++i) {
 	    solString += "," + to_string(itr.at(i));
@@ -49,13 +49,13 @@ void evalTwitter(string path, int num_runs, int version) {
 	cout << "read data" << endl;
     vector<int> ks = getIntVector(path + "sample_k.txt");
     vector<double> lams = getDoubleVector(path + "sample_lam.txt");
-	vector<vector<double>> dAtoC = getDistanceVector(path + "dAtoC.txt");
+	vector<vector<double>> dAtoC = getDistanceVector(path + "full_dAtoC.txt");
 	vector<vector<int>> nearest_k = getIntVecVec(path + "nearest_k.txt");
 	vector<int> nearest_f = getIntVector(path + "nearest_f.txt");
-	vector<vector<int>> G = getGraphVector(path + "G.txt");
+	//vector<vector<int>> G = getGraphVector(path + "G.txt");
 
 	cout << "Create C and F" << endl;
-	vector<int> sampled_C = getIntVector(path + "sampled_C.txt");
+	vector<int> sampled_C = getIntVector(path + "translated_sampled_C.txt");
 	vector<int> sample_amounts = {(int)sampled_C.size()};
 	if (version <= 1) {
        sample_amounts = getIntVector(path + "sample_amounts.txt");
@@ -69,6 +69,8 @@ void evalTwitter(string path, int num_runs, int version) {
 	for (int i = 0; i < dAtoC.size(); ++i) {
 		F.push_back(i);
 	}*/
+	cout << "nearest_f.size(): " << nearest_f.size() << endl;
+	cout << "nearest_k.size(): " << nearest_k.size() << endl;
     cout << "F.size(): " << F.size() << endl;
     cout << "sampled_C.size(): " << sampled_C.size() << endl;
     cout << "test" << endl;
@@ -77,9 +79,8 @@ void evalTwitter(string path, int num_runs, int version) {
     for (int run = 0; run < num_runs; ++run) {
         cout << "run " << run << endl;
         for (int amount : sample_amounts) {
-            // Increase the size of C.
             cout << "num_to_be_sampled: " << amount << endl;
-            vector<int> C = D_sampling(sampled_C, G, amount);
+            vector<int> C = fullMatrix_D_sampling(sampled_C, dAtoC, amount);
             for (int k : ks) {
                 for (double lam : lams) {
                     cout << "k: " << k << ", lam: " << to_string(lam) << ", C.size(): " << to_string(C.size()) << endl;
