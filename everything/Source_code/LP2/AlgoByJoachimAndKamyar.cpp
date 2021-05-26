@@ -54,7 +54,7 @@ pair<kMSolution, bool> recsolve(vector<int>* C, vector<int>* F, map<int, map<int
         map<int, double> f;
         // calculate the opening cost of each i in F
         for (int i : *F) {
-            f[i] = k - 1.0 * lam * (*dFtoF)[i][m];
+            f[i] = (k - 1.0) * lam * (*dFtoF)[i][m];
         }
 
         // print('(k - 1) * lam * dFtoF[i, m] = ' + str(k-1) + ' * ' + str(lam) + ' * ' + str(dFtoF[i, m]) + ' = ' + str((k - 1) * lam * dFtoF[i, m]))
