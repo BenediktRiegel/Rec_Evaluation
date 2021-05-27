@@ -7,8 +7,8 @@
 
 using namespace std;
 
-pair<kMSolution, vector<int>> rec_solve(vector<int>* C, vector<int>* F, vector<vector<double>>* dFtoC, int k, double lam,
-                                vector<vector<double>>* dFtoF, const vector<vector<int>>& nearest_k, const vector<int>& nearest_f){
+pair<kMSolution, vector<int>> rec_solve(const vector<int>& sampled_C, vector<int>* C, vector<int>* F, vector<vector<double>>* dFtoC, int k, double lam,
+                                        vector<vector<double>>* dFtoF, const vector<vector<int>>& nearest_k, const vector<int>& nearest_f){
 
     kMSolution S;
     S.service_cost = -1;
@@ -25,39 +25,26 @@ pair<kMSolution, vector<int>> rec_solve(vector<int>* C, vector<int>* F, vector<v
         cout << "JKRedAlgo: " << indexM << " of " << maxM << endl;
 
         vector<int> Fsubvec;
-        vector<int> newC;
         // Get Fsubvec and newC
         {
             set<int> Fsubset;
-            set<int> Cset;
             //cout << "Fsubset.insert k nearest for m" << endl;
-            //cout << "Csets.insert k nearest for m" << endl;
             for (int i = 0; i < k; ++i) {
                 Fsubset.insert(nearest_k.at(m).at(i));
-                Cset.insert(nearest_k.at(m).at(i));
             }
             //cout << "Fsubset.insert nearest f" << endl;
-            //cout << "Csets.insert nearest f" << endl;
-            for (int i = 0; i < (*C).size(); ++i) {
-                Fsubset.insert(nearest_f.at((*C).at(i)));
-                Cset.insert(nearest_f.at((*C).at(i)));
-            }
-            //cout << "Cset.insert every client" << endl;
-            for (int el : *C) {
-                Cset.insert(el);
+            for (int i = 0; i < sampled_C.size(); ++i) {
+                Fsubset.insert(nearest_f.at(sampled_C.at(i)));
             }
             //cout << "Fset to Fvec" << endl;
             for (int el : Fsubset) {
                 Fsubvec.push_back(el);
             }
-            //cout << "Cset to Cvec" << endl;
-            for (int el : Cset) {
-                newC.push_back(el);
-            }
         }
-        cout << "newC.size(): " << newC.size() << endl;
+        cout << "C.size(): " << (*C).size() << endl;
+        cout << "sampled_C.size(): " << sampled_C.size() << endl;
         cout << "Fsubvec.size(): " << Fsubvec.size() << endl;
-        pair<kMSolution, int> SAndItr = localsearchRec(&newC, &Fsubvec, dFtoC, k, lam, dFtoF);
+        pair<kMSolution, int> SAndItr = localsearchRec(C, &Fsubvec, dFtoC, k, lam, dFtoF);
 
         kMSolution tempS = SAndItr.first;
 #pragma omp critical

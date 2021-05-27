@@ -23,7 +23,7 @@ double calculate_RCcost(const vector<int>& S, map<int, map<int, double>>* dFtoF,
 }
 
 
-pair<kMSolution, bool> recsolve(vector<int>* C, vector<int>* F, map<int, map<int, double>>* dFtoF,
+pair<kMSolution, bool> recsolve(const vector<int>& sampled_C, vector<int>* C, vector<int>* F, map<int, map<int, double>>* dFtoF,
                                 map<int, map<int, double>>* dAtoC, double lam, int k, const vector<vector<int>>& G,
                                 const vector<vector<int>>& nearest_k, const vector<int>& nearest_f){
 
@@ -53,33 +53,31 @@ pair<kMSolution, bool> recsolve(vector<int>* C, vector<int>* F, map<int, map<int
         // time_t start = time(nullptr);
         map<int, double> f;
         // calculate the opening cost of each i in F
+        cout << "get f" << endl;
         for (int i : *F) {
-            f[i] = (k - 1.0) * lam * (*dFtoF)[i][m];
+            f[i] = (k - 1.0) * lam * (*dFtoF).at(i).at(m);
         }
         vector<int> Fsubvec;
-        vector<int> newC;
         // Get Fsubvec and newC
         {
             set<int> Fsubset;
-            set<int> Cset;
+            //nearest k f's for guessed m
+            cout << "nearest k f's" << endl;
             for (int i = 0; i < k; ++i) {
                 Fsubset.insert(nearest_k.at(m).at(i));
-                Cset.insert(nearest_k.at(m).at(i));
             }
-            for (int i = 0; i < (*C).size(); ++i) {
-                Fsubset.insert(nearest_f.at((*C).at(i)));
-                Cset.insert(nearest_f.at((*C).at(i)));
+            //nearest f for each sampled C
+            cout << "nearest f" << endl;
+            for (int i = 0; i < sampled_C.size(); ++i) {
+                Fsubset.insert(nearest_f.at(sampled_C.at(i)));
             }
-            for (int el : *C) {
-                Cset.insert(el);
-            }
+            //write set to vec
+            cout << "push to vec" << endl;
             for (int el : Fsubset) {
                 Fsubvec.push_back(el);
             }
-            for (int el : Cset) {
-                newC.push_back(el);
-            }
         }
+        cout << "Fsubvec.size(): " << Fsubvec.size() << endl;
         // print('(k - 1) * lam * dFtoF[i, m] = ' + str(k-1) + ' * ' + str(lam) + ' * ' + str(dFtoF[i, m]) + ' = ' + str((k - 1) * lam * dFtoF[i, m]))
 
         // use localSearch or Charikar/Li Algo, depending on which is wanted
@@ -88,7 +86,7 @@ pair<kMSolution, bool> recsolve(vector<int>* C, vector<int>* F, map<int, map<int
             (tempS, tempCost) = LocalSearchkUFL.solve(C, F, k, dFtoC, f)
         else:*/
 
-        pair<kMSolution, bool> SAndLP = solvekUFL(&newC, &Fsubvec, dAtoC, k, &f, G);
+        pair<kMSolution, bool> SAndLP = solvekUFL(C, &Fsubvec, dAtoC, k, &f, G);
         kMSolution tempS = SAndLP.first;
         bool temp_lp = SAndLP.second;
         

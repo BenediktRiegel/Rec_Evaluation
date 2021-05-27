@@ -5,6 +5,6 @@
 
 using namespace std;
 
-void evalTwitter(string path, int num_runs, int version);
+void evalTwitter(string path, int num_runs);
 
 void evalTwitter();

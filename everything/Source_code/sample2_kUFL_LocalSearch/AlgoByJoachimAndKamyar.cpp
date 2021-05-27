@@ -22,7 +22,7 @@ double calculate_RCcost(const vector<int>& S, vector<vector<double>>* dFtoF, dou
     return cost;
 }
 
-pair<kMSolution, vector<int>> recsolve(vector<int>* C, vector<int>* F, vector<vector<double>>* dFtoF,
+pair<kMSolution, vector<int>> recsolve(const vector<int>& sampled_C, vector<int>* C, vector<int>* F, vector<vector<double>>* dFtoF,
                                        vector<vector<double>>* dAtoC, double lam, int k,
                                        const vector<vector<int>>& nearest_k, const vector<int>& nearest_f) {
     cout << "start recsolve" << endl;
@@ -49,39 +49,26 @@ pair<kMSolution, vector<int>> recsolve(vector<int>* C, vector<int>* F, vector<ve
             f.push_back(((k - 1) * lam * (*dFtoF).at(i).at(m)));
         }
         vector<int> Fsubvec;
-        vector<int> newC;
         // Get Fsubvec and newC
         {
             set<int> Fsubset;
-            set<int> Cset;
             //cout << "Fsubset.insert k nearest for m" << endl;
             //cout << "Csets.insert k nearest for m" << endl;
             for (int i = 0; i < k; ++i) {
                 Fsubset.insert(nearest_k.at(m).at(i));
-                Cset.insert(nearest_k.at(m).at(i));
             }
             //cout << "Fsubset.insert nearest f" << endl;
             //cout << "Csets.insert nearest f" << endl;
-            for (int i = 0; i < (*C).size(); ++i) {
-                Fsubset.insert(nearest_f.at((*C).at(i)));
-                Cset.insert(nearest_f.at((*C).at(i)));
-            }
-            //cout << "Cset.insert every client" << endl;
-            for (int el : *C) {
-                Cset.insert(el);
+            for (int i = 0; i < sampled_C.size(); ++i) {
+                Fsubset.insert(nearest_f.at(sampled_C.at(i)));
             }
             //cout << "Fset to Fvec" << endl;
             for (int el : Fsubset) {
                 Fsubvec.push_back(el);
             }
-            //cout << "Cset to Cvec" << endl;
-            for (int el : Cset) {
-                newC.push_back(el);
-            }
         }
-        cout << "newC.size(): " << newC.size() << endl;
         cout << "Fsubvec.size(): " << Fsubvec.size() << endl;
-        pair<kMSolution, int> SAndItr = localsearchkUFL(&newC, &Fsubvec, dAtoC, k, &f);
+        pair<kMSolution, int> SAndItr = localsearchkUFL(C, &Fsubvec, dAtoC, k, &f);
 
         kMSolution tempS = SAndItr.first;
 #pragma omp critical
@@ -91,6 +78,7 @@ pair<kMSolution, vector<int>> recsolve(vector<int>* C, vector<int>* F, vector<ve
         tempS.other_cost = calculate_RCcost(tempS.solution, dFtoF, lam);
         // print out the facilities of the solution and what the costs are for the used median
         cout << "m: " << m << " tempCost: " << stringValue(tempS.cost()) << endl;
+        cout << "iterations to converge = " << SAndItr.second << endl;
         // check, if this solution is better than previous solutions
         if (S.service_cost == -1 || tempS.cost() < S.cost()) {
             S = tempS;

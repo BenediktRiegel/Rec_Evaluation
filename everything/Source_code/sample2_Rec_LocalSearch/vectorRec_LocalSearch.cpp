@@ -112,28 +112,37 @@ pair<kMSolution, vector<int>> getRandomS(vector<int>* F, int k, double lam, vect
                                          vector<vector<double>>* dFtoF, mt19937 random_engine, vector<int>* serving_f) {
     kMSolution S;
 
-    int maxC = maxOf(C) + 1;
-    (*serving_f).reserve(maxC);
+    cout << "getRandomS" << endl;
+    //int maxC = maxOf(C) + 1;
+    cout << "maxOf(C) + 1 = " << maxOf(C) + 1 << endl;
+    cout << "(*C).size() = " << (*C).size() << endl;
+    int maxC = (*C).size();
+    //(*serving_f).reserve(maxC);
+    cout << "\tserving_f" << endl;
     for (int j = 0; j < maxC; ++j){
         (*serving_f).push_back(0);
     }
     vector<int> solution;
-    vector<int> indices((*F).size());
-    for (int i = 0; i < indices.size(); ++i) {
-        indices[i] = i;
+    vector<int> indices;
+    //indices.reserve((*F).size());
+    cout << "\tindices" << endl;
+    for (int i = 0; i < (*F).size(); ++i) {
+        indices.push_back(i);
     }
-    iota(indices.begin(), indices.end(), 0);
+    //iota(indices.begin(), indices.end(), 0);
     shuffle(indices.begin(), indices.end(), random_engine);
+    cout << "\tsolution" << endl;
     for (int i = 0; i < k; ++i) {
-        solution.push_back((*F)[indices[i]]);
+        solution.push_back((*F).at(indices.at(i)));
     }
     S.solution = solution;
     S.service_cost = calculate_servicecost(S.solution, C, dFtoC, serving_f);
     S.other_cost = calculate_reccost(S.solution, dFtoF, lam);
 
     vector<int> notS;
+    cout << "\tnotS" << endl;
     for (int i = k; i < (*F).size(); ++i) {
-        notS.push_back((*F)[indices[i]]);
+        notS.push_back((*F).at(indices.at(i)));
     }
 
     return pair<kMSolution, vector<int>>(S, notS);

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void evalFpartC(string path, int num_runs, int version);
+void evalFpartC(string path, int num_runs);
 
 //void evalTwitter(string path, int num_runs);
 
