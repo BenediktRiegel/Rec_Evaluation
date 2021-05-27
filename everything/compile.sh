@@ -14,7 +14,7 @@ chmod +x ./new_versions/Rec_LocalSearch/
 
 #Sample
 make -C ./Source_code/sample2_kUFL_LocalSearch/ all
-cp ./Source_code/sample2_kUFL_LocalSearch/sample_kUFL_LocalSearch ./sample/sample_kUFL_LocalSearch/
+cp ./Source_code/sample2_kUFL_LocalSearch/sample2_kUFL_LocalSearch ./sample/sample_kUFL_LocalSearch/
 chmod +x ./sample/sample_kUFL_LocalSearch/
 
 make -C ./Source_code/sample_LP2/ all
