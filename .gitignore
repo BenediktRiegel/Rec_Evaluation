@@ -5,6 +5,7 @@ everything/Data/lower_dimensions_Wikipedia/wikielections_distances.csv
 everything/Data/Twitter/dAtoC.txt
 everything/Data/Twitter/G.txt
 everything/Data/Twitter/full_dAtoC.txt
+everything/Data/Twitter/sampled_d.txt
 everything/Data/Twitter/translated_sampled_C.txt
 everything/new_versions/LP/LP_Algo_fixedDouble
 everything/Data/Congress/EvaluationResults/**/*.txt
