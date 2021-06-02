@@ -10,8 +10,16 @@ everything/Data/Twitter/translated_sampled_C.txt
 everything/new_versions/LP/LP_Algo_fixedDouble
 everything/Data/Congress/EvaluationResults/**/*.txt
 everything/Data/Congress/sampleEvaluationResults/**/*.txt
+everything/Data/Congress/uniformSampleEvaluationResults/**/*.txt
 everything/Data/Twitter/EvaluationResults/**/*.txt
 everything/Data/Twitter/sampleEvaluationResults/**/*.txt
+everything/Data/Twitter/uniformSampleEvaluationResults/**/*.txt
+everything/Data/Wikipedia/EvaluationResults/**/*.txt
+everything/Data/Wikipedia/sampleEvaluationResults/**/*.txt
+everything/Data/Wikipedia/uniformSampleEvaluationResults/**/*.txt
+everything/Data/lower_dimensions_Wikipedia/EvaluationResults/**/*.txt
+everything/Data/lower_dimensions_Wikipedia/sampleEvaluationResults/**/*.txt
+everything/Data/lower_dimensions_Wikipedia/uniformSampleEvaluationResults/**/*.txt
 *.o
 *.out
 
